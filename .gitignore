@@ -1,0 +1,5 @@
+/.Rhistory
+/cache/
+*.alp.autosave
+/database/**
+.Rproj.user
