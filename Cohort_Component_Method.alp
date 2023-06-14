@@ -5729,6 +5729,9 @@ root.Create_AnnualCSV_CustomExp(root.AnnualCSV_FileName );
 			<RangeVariationParamValue>	
 				<Id>1612992144530</Id>
 				<Type>RANGE</Type>
+				<Expression Class="CodeValue">
+					<Code><![CDATA[1]]></Code>
+				</Expression>
 				<From Class="CodeValue">
 					<Code><![CDATA[0]]></Code>
 				</From>
@@ -5763,6 +5766,9 @@ root.Create_AnnualCSV_CustomExp(root.AnnualCSV_FileName );
 			<RangeVariationParamValue>	
 				<Id>1620835060614</Id>
 				<Type>RANGE</Type>
+				<Expression Class="CodeValue">
+					<Code><![CDATA[1]]></Code>
+				</Expression>
 				<From Class="CodeValue">
 					<Code><![CDATA[0]]></Code>
 				</From>
@@ -5797,7 +5803,7 @@ root.Create_AnnualCSV_CustomExp(root.AnnualCSV_FileName );
 				<Id>1621629563421</Id>
 				<Type>FIXED</Type>
 				<Expression Class="CodeValue">
-					<Code><![CDATA[100000]]></Code>
+					<Code><![CDATA[-1]]></Code>
 				</Expression>
 			</RangeVariationParamValue>
 			<RangeVariationParamValue>	
@@ -5850,7 +5856,7 @@ root.Create_AnnualCSV_CustomExp(root.AnnualCSV_FileName );
 			</RangeVariationParamValue>
 			<RangeVariationParamValue>	
 				<Id>1648492121753</Id>
-				<Type>FIXED</Type>
+				<Type>RANGE</Type>
 				<Expression Class="CodeValue">
 					<Code><![CDATA[-1]]></Code>
 				</Expression>
@@ -6002,13 +6008,7 @@ public final class DBUtils {
 				.where(un_survival_ratio.cohort.eq(cohort))
 				.where(un_survival_ratio.gender.eq(gender))
 				.uniqueResult(true, un_survival_ratio.survival_ratio);
-		
-		int year = (int) floor(main.time(YEAR));
-		int yearsPassedInPeriod = year % 5;
-		double yearsAgoBorn = age + 1;
-		double tc = yearsPassedInPeriod - yearsAgoBorn;
-		double powerDenominator = 5 - tc;
-		return 1.0 - Math.pow(survivalRatio, 1.0 / powerDenominator);
+		return 1.0 - Math.pow(survivalRatio, 1.0 / 3.0);
 	}
 		
 
@@ -6077,14 +6077,10 @@ public final class DBUtils {
 					int year = (int) floor(main.time(YEAR));
 					int yearsPassedInPeriod = year % 5;
 					for (int curAge = -1; curAge < yearsPassedInPeriod; curAge++) {
-						double yearsAgoBorn = curAge + 1;
-						double tc = yearsPassedInPeriod - yearsAgoBorn;
-						double denominator = (5 - tc) * 5;
-						
 						int numEmigrants = (int) Math.rint(
 								t.get(1, Double.class) 
 								* Net_Out_migration_Mal 
-								/ denominator);
+								/ 15.0);
 						if (numEmigrants > 0) {
 							String cohort = t.get(0, String.class);
 							double age = getEmigrantAgeFromCohortString(cohort);
@@ -6127,14 +6123,10 @@ public final class DBUtils {
 					int year = (int) floor(main.time(YEAR));
 					int yearsPassedInPeriod = year % 5;
 					for (int curAge = -1; curAge < yearsPassedInPeriod; curAge++) {
-						double yearsAgoBorn = curAge + 1;
-						double tc = yearsPassedInPeriod - yearsAgoBorn;
-						double denominator = (5 - tc) * 5;
-						
 						int numEmigrants = (int) Math.rint(
 								t.get(1, Double.class) 
 								* Net_Out_migration_Fem 
-								/ denominator);
+								/ 15.0);
 						if (numEmigrants > 0) {
 							String cohort = t.get(0, String.class);
 							double age = getEmigrantAgeFromCohortString(cohort);
@@ -6198,16 +6190,10 @@ public final class DBUtils {
 		                .uniqueResult(true, net_out_mig_age_gender_prop.value);
 			// In split age one year step models, infants have some special migration handling.
 			if (!main.FiveYearStep && main.ForceUseSplitAge && age <= 3) {
-				int year = (int) floor(main.time(YEAR));
-				int yearsPassedInPeriod = year % 5;
-				double yearsAgoBorn = age + 1;
-				double tc = yearsPassedInPeriod - yearsAgoBorn;
-				double denominator = (5 - tc) * 5;
-				
 				int numEmigrants = (int) Math.rint(
 						prop
 						* Net_Out_migration_Mal 
-						/ denominator);
+						/  15.0);
 				return numEmigrants;
 			} else {
 			
@@ -6241,16 +6227,10 @@ public final class DBUtils {
 		                .uniqueResult(true, net_out_mig_age_gender_prop.value);
 			// In split age one year step models, infants have some special migration handling.
 			if (!main.FiveYearStep && main.ForceUseSplitAge && age <= 3) {
-				int year = (int) floor(main.time(YEAR));
-				int yearsPassedInPeriod = year % 5;
-				double yearsAgoBorn = age + 1;
-				double tc = yearsPassedInPeriod - yearsAgoBorn;
-				double denominator = (5 - tc) * 5;
-				
 				int numEmigrants = (int) Math.rint(
 						prop
 						* Net_Out_migration_Fem 
-						/ denominator);
+						/ 15.0);
 				return numEmigrants;
 			} else {
 			
